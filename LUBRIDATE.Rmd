@@ -59,7 +59,15 @@ ggplot(data = wmata_ridership, aes(x = day_of_week, y = proportion)) +
   geom_boxplot() +
   labs(x = "Day of the Week", y = "Proportion of Ridership", title = "Proportion of Ridership vs Day of the Week")
 
+# Problem 2:
 
+leap_years <- c(2024, 3021, 2000, 1800, 800, 5050, 600, 7156)
+leap_years[as.logical((leap_years %% 4 == 0 & leap_years %% 100 != 0) | leap_years %% 400 == 0)]
+
+
+# Return leap years for the specified years
+leap_years <- c(2024, 3021, 2000, 1800, 800, 5050, 600, 7156)
+leap_years[which(leap_year(leap_years))]
 
 ```
 
