@@ -1,0 +1,67 @@
+---
+title: "lubridate_assignment"
+author: "Krishna"
+date: "2024-02-24"
+output: html_document
+---
+
+```{r}
+# Load required libraries
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+
+# Problem 1:
+wmata_ridership <- read.csv("https://dcgerard.github.io/stat_412_612/data/wmata_ridership.csv")
+
+# Convert Date column to Date format
+wmata_ridership$Date <- as.Date(wmata_ridership$Date)
+
+# Filter out days from 2004 and 2005
+wmata_ridership <- wmata_ridership %>%
+  filter(year(Date) != 2004 & year(Date) != 2005)
+
+# Calculate the total rides per day
+total_rides_per_day <- wmata_ridership %>%
+  group_by(Date) %>%
+  summarise(total_rides = sum(Total))
+
+# Calculate the proportion of rides made on a given day of the month
+wmata_ridership <- wmata_ridership %>%
+  left_join(total_rides_per_day, by = "Date") %>%
+  mutate(proportion = Total / total_rides)
+
+# Extract day of the month
+wmata_ridership$day_of_month <- day(wmata_ridership$Date)
+
+# Extract day of the week from Date
+wmata_ridership$day_of_week <- weekdays(wmata_ridership$Date)
+
+# Convert day_of_week to a factor variable with specific levels
+wmata_ridership$day_of_week <- factor(wmata_ridership$day_of_week, levels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+# Check for missing values
+missing_values <- sum(is.na(wmata_ridership$proportion))
+if (missing_values > 0) {
+  # If there are missing values, remove them from the dataset
+  wmata_ridership <- wmata_ridership[!is.na(wmata_ridership$proportion), ]
+}
+
+# Ensure day_of_week is a factor
+wmata_ridership$day_of_week <- factor(wmata_ridership$day_of_week,
+                                      levels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+
+
+
+# Create box plots of proportions of ridership vs day of the week
+ggplot(data = wmata_ridership, aes(x = day_of_week, y = proportion)) +
+  geom_boxplot() +
+  labs(x = "Day of the Week", y = "Proportion of Ridership", title = "Proportion of Ridership vs Day of the Week")
+
+
+
+```
+
+
+
